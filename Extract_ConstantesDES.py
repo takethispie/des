@@ -141,7 +141,6 @@ def recupConstantesDES() :
 				deb+=1
 			
 			col+=1
-			
 	return X
 
 def MatZero(i, j):
