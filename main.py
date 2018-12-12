@@ -2,7 +2,9 @@ import des
 
 def main():
     mydes = des.Des()
-    res = mydes.genSubkeys("0001001100110100010101110111100110011011101111001101111111110001")
+    message = "0123456789ABCDEF"
+    key = "1110111111000100110111111010000110011110010100100000111001000011"
+    res = mydes.Encrypt(message, key)
     print(res)
 
 main()

@@ -1,10 +1,12 @@
 import Extract_ConstantesDES
 import ConvAlphaBin
+import feistel
 
 class Des:
     def __init__(self):
         self.constDes = Extract_ConstantesDES.recupConstantesDES()
         self.roundSH = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
+        self.f = feistel.feistel()
 
     def DoPC1(self, key64):
         key56 = ""
@@ -60,3 +62,19 @@ class Des:
             for x in y:
                 cipher += roundFunRes[int(x)]
         return cipher
+
+
+    def Encrypt(self, message, key):
+        binTxt = ConvAlphaBin.conv_bin(message)
+        roundkeys = self.genSubkeys(key)
+        permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
+        left, right = self.splitHalf(permutedTxt)
+        for round in range(16):
+            newR = self.f.XOR(left, roundkeys[round])
+            newL = right
+            right = newR
+            left = newL
+        cipher = self.DoInversePerm(self.constDes["PI_I"], right+left)
+        return cipher
+
+
