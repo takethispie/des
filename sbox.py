@@ -20,7 +20,7 @@ def DecToBin(decimal):
     return bin(decimal)[2:].zfill(4)
 
 
-def sbox_lookup(sboxMatrix, firstlast, middle4):
+def lookup(sboxMatrix, firstlast, middle4):
     firstlast = BinToDec(firstlast)
     middle = BinToDec(middle4)
     res = sboxMatrix[firstlast][middle]

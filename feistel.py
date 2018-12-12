@@ -1,3 +1,5 @@
+import sbox
+
 class feistel:
     def DoExpansion(self, bits, EMatrix):
         bits48 = ""
@@ -16,12 +18,23 @@ class feistel:
                 result += '1'
         return result
 
-
-    
-
-
+    #permutation finale apres la round function
     def DoPermutation(self, PMatrix, sbox):
         bits = ""
-        for index in PMatrix:
-            bits += sbox[index]
+        for y in PMatrix:
+            for index in y:
+                bits += sbox[index]
         return bits
+
+    def DoF(self, bits32, key48, EMatrix, PMatrix):
+        result = ""
+        ELeftHalf = self.DoExpansion(EMatrix, bits32)
+        xored = self.XOR(ELeftHalf, key48)
+        bits6list = sbox.SplitTo6Bits(xored)
+        for sboxcount, bits6 in enumerate(bits6list):
+            firstLast = sbox.FirstAndLastBit(bits6)
+            middle4 = sbox.MiddleFourBits(bits6)
+            sboxvalue = sbox.lookup(sboxcount, firstLast, middle4)
+            result += sboxvalue
+        final32bits = self.DoPermutation(PMatrix, result)
+        return final32bits

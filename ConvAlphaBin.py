@@ -43,6 +43,7 @@ def FiltreTXT(txt) :
 		elif(c=="À") : res+='A'
 		elif(c=="È" or c=="É") : res+='E'
 	return res
+
 	
 #prend en paramètre un texte et renvoie la chaine binaire associée (en suivant le dictionnaire)
 def conv_bin(txt) :
@@ -51,4 +52,38 @@ def conv_bin(txt) :
 	return X
 
 
-	
+HexToBin = {'0':'0000',
+		 '1':'0001',
+		 '2':'0010',
+		 '3':'0011',
+		 '4':'0100',
+		 '5':'0101',
+		 '6':'0110',
+		 '7':'0111',
+		 '8':'1000',
+		 '9':'1001',
+		 'A':'1010',
+		 'B':'1011',
+		 'C':'1100',
+		 'D':'1101',
+		 'E':'1110',
+		 'F':'1111',
+		}
+
+def hexDigitToBinaryBits(hex_digit):
+	binary_4bits = HexToBin[hex_digit]
+	return binary_4bits
+
+
+def hexString_to_binary_bits1(hex_string):
+	binary_bits = ""
+	for hex_digit in hex_string:
+		binary_bits += hexDigitToBinaryBits(hex_digit)
+	return binary_bits
+
+
+def HexToBinary(hexdigits):
+	res = ""
+	for hexdigit in hexdigits:
+		res += bin(int(hexdigit, 16))[2:].zfill(4)
+	return res
