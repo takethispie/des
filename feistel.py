@@ -3,9 +3,8 @@ import sbox
 class feistel:
     def DoExpansion(self, bits, EMatrix):
         bits48 = ""
-        for y in EMatrix:
-            for x in y:
-                bits48 += bits[x]
+        for x in EMatrix[0]:
+            bits48 += bits[x]
         return bits48
 
 
@@ -21,9 +20,8 @@ class feistel:
     #permutation finale apres la round function
     def DoPermutation(self, PMatrix, sbox):
         bits = ""
-        for y in PMatrix:
-            for index in y:
-                bits += sbox[index]
+        for index in PMatrix[0]:
+            bits += sbox[index]
         return bits
 
     def DoF(self, bits32, key48, EMatrix, PMatrix):

@@ -10,9 +10,8 @@ class Des:
 
     def DoPC1(self, key64):
         key56 = ""
-        for i in self.constDes["CP_1"]:
-            for j in i:
-                key56 += key64[j]
+        for j in self.constDes["CP_1"][0]:
+            key56 += key64[j]
         return key56
 
     def SplitInTwo(self, key56):
@@ -25,9 +24,8 @@ class Des:
 
     def DoPC2(self, key56):
         key48 = ""
-        for i in self.constDes["CP_2"]:
-            for j in i:
-                key48 += key56[j]
+        for j in self.constDes["CP_2"][0]:
+            key48 += key56[j]
         return key48
 
     def genSubkeys(self, key64):
@@ -46,9 +44,8 @@ class Des:
 
     def DoInitialPerm(self, IPMatrix, text):
         permutated = ""
-        for y in IPMatrix:
-            for x in y:
-                permutated += text[int(x)]
+        for x in IPMatrix[0]:
+            permutated += text[int(x)]
         return permutated
 
 
@@ -58,17 +55,17 @@ class Des:
 
     def DoInversePerm(self, InvPMatrix, roundFunRes):
         cipher = ""
-        for y in InvPMatrix:
-            for x in y:
-                cipher += roundFunRes[int(x)]
+        for x in InvPMatrix[0]:
+            cipher += roundFunRes[int(x)]
         return cipher
 
 
     def Encrypt(self, message, key):
-        binTxt = ConvAlphaBin.conv_bin(message)
+        #binTxt = ConvAlphaBin.conv_bin(message)
+        binTxt = message
         roundkeys = self.genSubkeys(key)
         permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
-        left, right = self.splitHalf(permutedTxt)
+        left,right = self.splitHalf(permutedTxt)
         for round in range(16):
             newR = self.f.XOR(left, roundkeys[round])
             newL = right
