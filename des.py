@@ -49,7 +49,7 @@ class Des:
         return permutated
 
 
-    def splitHalf(binarybits):
+    def splitHalf(self, binarybits):
         return binarybits[:32], binarybits[32:]
 
 
