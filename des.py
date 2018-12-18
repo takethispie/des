@@ -45,7 +45,7 @@ class Des:
     def DoInitialPerm(self, IPMatrix, text):
         permutated = ""
         for x in IPMatrix[0]:
-            permutated += text[int(x)]
+            permutated += text[x]
         return permutated
 
 
@@ -56,13 +56,13 @@ class Des:
     def DoInversePerm(self, InvPMatrix, roundFunRes):
         cipher = ""
         for x in InvPMatrix[0]:
-            cipher += roundFunRes[int(x)]
+            cipher += roundFunRes[x]
         return cipher
 
 
     def Encrypt(self, message, key):
-        #binTxt = ConvAlphaBin.conv_bin(message)
-        binTxt = message
+        binTxt = ConvAlphaBin.conv_bin(message)
+        clearKey = ConvAlphaBin.nib_vnoc(key)
         roundkeys = self.genSubkeys(key)
         permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
         left,right = self.splitHalf(permutedTxt)
