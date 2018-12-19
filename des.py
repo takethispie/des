@@ -67,7 +67,7 @@ class Des:
         permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
         left,right = self.splitHalf(permutedTxt)
         for round in range(16):
-            newR = self.f.XOR(left, self.f.DoF(roundkeys[round]))
+            newR = self.f.XOR(left, self.f.DoF(right, roundkeys[round], self.constDes["E"], self.constDes["PERM"]))
             newL = right
             right = newR
             left = newL
@@ -79,9 +79,9 @@ class Des:
         clearKey = ConvAlphaBin.nib_vnoc(key)
         roundkeys = self.genSubkeys(key)
         permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
-        left,right = self.splitHalf(permutedTxt)
+        right,left = self.splitHalf(permutedTxt)
         for round in range(16):
-            newR = self.f.XOR(left, self.f.DoF(roundkeys[round]))
+            newR = self.f.XOR(left, self.f.DoF(right, roundkeys[16-round], self.constDes["E"], self.constDes["PERM"]))
             newL = right
             right = newR
             left = newL
