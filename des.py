@@ -67,7 +67,21 @@ class Des:
         permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
         left,right = self.splitHalf(permutedTxt)
         for round in range(16):
-            newR = self.f.XOR(left, roundkeys[round])
+            newR = self.f.XOR(left, self.f.DoF(roundkeys[round]))
+            newL = right
+            right = newR
+            left = newL
+        cipher = self.DoInversePerm(self.constDes["PI_I"], right+left)
+        return cipher
+
+    def Decrypt(self, message, key):
+        binTxt = ConvAlphaBin.conv_bin(message)
+        clearKey = ConvAlphaBin.nib_vnoc(key)
+        roundkeys = self.genSubkeys(key)
+        permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
+        left,right = self.splitHalf(permutedTxt)
+        for round in range(16):
+            newR = self.f.XOR(left, self.f.DoF(roundkeys[round]))
             newL = right
             right = newR
             left = newL
