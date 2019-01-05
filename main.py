@@ -1,11 +1,20 @@
 import des
 
-def main():
-    mydes = des.Des()
-    message = "lolopooptest"
-    key = "1110111111000100110111111010000110011110010100100000111001000011"
-    res = mydes.Encrypt(message, key)
-    res2 = mydes.Decrypt(res, key)
-    print(res2)
 
+def main():
+    my_des = des.Des()
+
+    key = "0100110010101110110111001010110111000100011010001100100000101010"
+
+    message_encrypted = "zENEDyWtIzB!m QfTKodCpf,MhybIX,'ye,ànèM'féCcrB-uRu!m"
+    # message_decrypted = "je sais aps"
+
+    # message_encrypted = my_des.Encrypt(message_decrypted, key)
+    print("Encrypted message =>", message_encrypted)
+
+    message_decrypted = my_des.Decrypt(message_encrypted, key)
+    print("Decrypted message =>", message_decrypted)
+
+
+# Run this app
 main()

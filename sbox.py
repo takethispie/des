@@ -4,6 +4,7 @@ import textwrap
 def SplitTo6Bits(bits):
     return textwrap.wrap(bits, 6)
 
+
 def FirstAndLastBit(bits6):
     return bits6[0] + bits6[-1]
 
@@ -21,7 +22,9 @@ def DecToBin(decimal):
 
 
 def lookup(sboxMatrix, firstlast, middle4):
+    print("lookup =>", firstlast)
     firstlast = BinToDec(firstlast)
+    print("lookup =>", firstlast)
     middle = BinToDec(middle4)
     res = sboxMatrix[firstlast][middle]
     return DecToBin(res)

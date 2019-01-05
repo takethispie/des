@@ -1,12 +1,12 @@
 import sbox
 
+
 class feistel:
-    def DoExpansion(self, bits, EMatrix):
+    def DoExpansion(self, EMatrix, bits):
         bits48 = ""
         for x in EMatrix[0]:
             bits48 += bits[x]
         return bits48
-
 
     def XOR(self, bits1, bits2):
         result = ""
@@ -17,7 +17,8 @@ class feistel:
                 result += '1'
         return result
 
-    #permutation finale apres la round function
+    # permutation finale apres la round function
+    # example : M = 1010  become  M' = 0110
     def DoPermutation(self, PMatrix, sbox):
         bits = ""
         for index in PMatrix[0]:
