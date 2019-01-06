@@ -21,18 +21,50 @@ class Des:
         return mix_key
 
     def do_pc2(self, key56):
-        key48 = ""
+        mix_key = ""
+        i = 1
         for j in self.constDes["CP_2"][0]:
-            key48 += key56[j]
-        return key48
+            pos = j - i
+            if (pos < 0):
+                len(key56) + j
+            mix_key += key56[pos]
+            i += 1
+        return mix_key
 
     @staticmethod
-    def split_in_two(key56):
+    def do_inverse_perm(InvPMatrix, roundFunRes):
+        cipher = ""
+        for x in InvPMatrix[0]:
+            cipher += roundFunRes[x]
+        return cipher
+
+    @staticmethod
+    def split_half_56bits(key56):
         left, right = key56[:28], key56[:28]
         return left, right
 
     @staticmethod
-    def BarrelLShift(bits, numBits):
+    def split_half_64bits(key64):
+        left, right = key64[:32], key64[:32]
+        return left, right
+
+    @staticmethod
+    def split_many_blocks_64bits(key):
+        blocks = list()
+        str_temp = ""
+        i = 0
+        for j in key:
+            str_temp += j
+            if (i % 64 == 63):
+                while (len(str_temp) < 64):
+                    str_temp += "0"
+                blocks.append(str_temp)
+                str_temp = ""
+            i += 1
+        return blocks
+
+    @staticmethod
+    def left_shift(bits, numBits):
         SHBits = bits[numBits:] + bits[:numBits]
         return SHBits
 
@@ -49,49 +81,48 @@ class Des:
     def gen_sub_keys(self, key64):
         key56 = self.delete_control_bits(key64)
         pc1_out = self.do_pc1(key56)
-        key_left, key_right = self.split_in_two(pc1_out)
+        key_left, key_right = self.split_half_56bits(pc1_out)
         subkeys = list()
         for roundNum in range(16):
-            newLeft = self.BarrelLShift(key_left, self.roundSH[roundNum])
-            newRight = self.BarrelLShift(key_right, self.roundSH[roundNum])
-            subkey = self.do_pc2(newLeft + newRight)
+            new_key_left = self.left_shift(key_left, 1)  # self.roundSH[roundNum]
+            new_key_right = self.left_shift(key_right, 1)  # self.roundSH[roundNum]
+            subkey = self.do_pc2(new_key_left + new_key_right)
             subkeys.append(subkey)
-            key_left = newLeft
-            key_right = newRight
+            key_left = new_key_left
+            key_right = new_key_right
         return subkeys
 
     @staticmethod
-    def DoInitialPerm(IPMatrix, text):
+    def do_initial_perm(IPMatrix, text):
         permutated = ""
         for x in IPMatrix[0]:
             permutated += text[x]
         return permutated
 
     @staticmethod
-    def splitHalf(binarybits):
+    def split_half(binarybits):
         return binarybits[:32], binarybits[32:]
 
-    @staticmethod
-    def DoInversePerm(InvPMatrix, roundFunRes):
-        cipher = ""
-        for x in InvPMatrix[0]:
-            cipher += roundFunRes[x]
-        return cipher
-
     def encrypt_decrypt(self, message, key):
-        binTxt = ConvAlphaBin.conv_bin(message)
-        clearKey = ConvAlphaBin.nib_vnoc(key)
-        print("encrypt_decrypt =>", key)
-        print("encrypt_decrypt =>", clearKey)
-        roundkeys = self.gen_sub_keys(key)
-        permutedTxt = self.DoInitialPerm(self.constDes["PI"], binTxt)
-        left, right = self.splitHalf(permutedTxt)
+        # clear_key = ConvAlphaBin.nib_vnoc(key)
+        round_keys = self.gen_sub_keys(key)  # Génération des sous clefs
+
+        bin_message = ConvAlphaBin.conv_bin(message)  # Conversion du message en binaire
+        blocks = self.split_many_blocks_64bits(bin_message)  # Split du message binaire an plusieurs bloc de 64bits
+
+        # TODO faire une boucle sur chaque blocs afin d'effectuer la permutation de chacun des blocs
+        #   (la boucle remplacera le bloc actuel par le bloc permuté)
+        permuted_message = self.do_initial_perm(self.constDes["PI"], bin_message)
+
+
+
+        left, right = self.split_half_64bits(permuted_message)
         for round in range(16):
-            newR = self.f.XOR(left, self.f.DoF(right, roundkeys[round], self.constDes["E"], self.constDes["PERM"]))
+            newR = self.f.XOR(left, self.f.DoF(right, round_keys[round], self.constDes["E"], self.constDes["PERM"]))
             newL = right
             right = newR
             left = newL
-        cipher = self.DoInversePerm(self.constDes["PI_I"], right + left)
+        cipher = self.do_inverse_perm(self.constDes["PI_I"], right + left)
         return cipher
 
     def encrypt(self, message, key):
