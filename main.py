@@ -9,10 +9,10 @@ def main():
     message_encrypted = "zENEDyWtIzB!m QfTKodCpf,MhybIX,'ye,ànèM'féCcrB-uRu!m"
     # message_decrypted = "je sais aps"
 
-    # message_encrypted = my_des.Encrypt(message_decrypted, key)
+    # message_encrypted = my_des.encrypt(message_decrypted, key)
     print("Encrypted message =>", message_encrypted)
 
-    message_decrypted = my_des.Decrypt(message_encrypted, key)
+    message_decrypted = my_des.decrypt(message_encrypted, key)
     print("Decrypted message =>", message_decrypted)
 
 
