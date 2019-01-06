@@ -5,38 +5,21 @@ import feistel
 
 class Des:
     def __init__(self):
-        self.constDes = Extract_ConstantesDES.recup_constantes_des()
+        self.const_des = Extract_ConstantesDES.recup_constantes_des()
         self.roundSH = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
-        self.f = feistel.feistel()
-
-    def do_pc1(self, key56):
-        mix_key = ""
-        i = 1
-        for j in self.constDes["CP_1"][0]:
-            pos = j - i
-            if (pos < 0):
-                len(key56) + j
-            mix_key += key56[pos]
-            i += 1
-        return mix_key
-
-    def do_pc2(self, key56):
-        mix_key = ""
-        i = 1
-        for j in self.constDes["CP_2"][0]:
-            pos = j - i
-            if (pos < 0):
-                len(key56) + j
-            mix_key += key56[pos]
-            i += 1
-        return mix_key
+        self.feistel = feistel.feistel()
 
     @staticmethod
-    def do_inverse_perm(InvPMatrix, roundFunRes):
-        cipher = ""
-        for x in InvPMatrix[0]:
-            cipher += roundFunRes[x]
-        return cipher
+    def do_perm_key_matrix(inv_matrix, key):
+        mix_key = ""
+        i = 1
+        for j in inv_matrix[0]:
+            pos = j - i
+            if (pos < 0):
+                len(key) + j
+            mix_key += key[pos]
+            i += 1
+        return mix_key
 
     @staticmethod
     def split_half_56bits(key56):
@@ -80,13 +63,13 @@ class Des:
 
     def gen_sub_keys(self, key64):
         key56 = self.delete_control_bits(key64)
-        pc1_out = self.do_pc1(key56)
+        pc1_out = self.do_perm_key_matrix(self.const_des["CP_1"], key56)  # Permutation CP1
         key_left, key_right = self.split_half_56bits(pc1_out)
         subkeys = list()
         for roundNum in range(16):
-            new_key_left = self.left_shift(key_left, 1)  # self.roundSH[roundNum]
-            new_key_right = self.left_shift(key_right, 1)  # self.roundSH[roundNum]
-            subkey = self.do_pc2(new_key_left + new_key_right)
+            new_key_left = self.left_shift(key_left, 1)
+            new_key_right = self.left_shift(key_right, 1)
+            subkey = self.do_perm_key_matrix(self.const_des["CP_2"], new_key_left + new_key_right)  # Permutation CP2
             subkeys.append(subkey)
             key_left = new_key_left
             key_right = new_key_right
@@ -108,22 +91,31 @@ class Des:
         round_keys = self.gen_sub_keys(key)  # Génération des sous clefs
 
         bin_message = ConvAlphaBin.conv_bin(message)  # Conversion du message en binaire
-        blocks = self.split_many_blocks_64bits(bin_message)  # Split du message binaire an plusieurs bloc de 64bits
+        blocks = self.split_many_blocks_64bits(bin_message)  # Split du message binaire en plusieurs blocs de 64bits
 
-        # TODO faire une boucle sur chaque blocs afin d'effectuer la permutation de chacun des blocs
-        #   (la boucle remplacera le bloc actuel par le bloc permuté)
-        permuted_message = self.do_initial_perm(self.constDes["PI"], bin_message)
+        pi_left = list()
+        pi_right = list()
 
+        for i in range(0, len(blocks) - 1):
+            blocks[i] = self.do_perm_key_matrix(self.const_des["PI"], blocks[i])  # Permutation PI
+            left, right = self.split_half_64bits(blocks[i])
+            pi_left.append(left)
+            pi_right.append(right)
 
+        result = list()
+        for i in range(0, len(pi_left) - 1):  # Ou pi_left, ça revient au même
+            left = pi_left[i]
+            right = pi_right[i]
+            cipher = ""
+            for j in range(16):
+                temp_right = self.feistel.XOR(left, self.feistel.DoF(right, round_keys[j], self.const_des["E"], self.const_des["PERM"]))  # Fix un bug qui est dans cette ligne
+                temp_left = right
+                right = temp_right
+                left = temp_left
+                cipher = self.do_perm_key_matrix(self.const_des["PI_I"], temp_right + temp_left)
+            result.append(cipher)
 
-        left, right = self.split_half_64bits(permuted_message)
-        for round in range(16):
-            newR = self.f.XOR(left, self.f.DoF(right, round_keys[round], self.constDes["E"], self.constDes["PERM"]))
-            newL = right
-            right = newR
-            left = newL
-        cipher = self.do_inverse_perm(self.constDes["PI_I"], right + left)
-        return cipher
+        return result
 
     def encrypt(self, message, key):
         return self.encrypt_decrypt(message, key)
