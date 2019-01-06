@@ -31,51 +31,68 @@ for i in range(0, 64):
 
 
 # Renvoie la chaine de caractère txt avec uniquement les caractères de l'alphabet.
-def FiltreTXT(txt):
+def filtre_txt(txt):
 	res = ""
 	for c in txt:
-		if(ALPHABET.find(c)!=-1) : res += c
-		elif(c=='ê' or c=='ë') : res += 'e'
-		elif(c=='â') : res += 'a'
-		elif(c=='ç') : res += 'c'
-		elif(c=='î') : res += 'i'
-		elif(c=='Ç') : res += 'C'
-		elif(c=='ù' or c=="û") : res += 'u'
-		elif(c=='ô') : res += 'o'
-		elif(c=='Ô') : res += 'O'
-		elif(c=='œ') : res += 'oe'
-		elif(c=="À") : res += 'A'
-		elif(c=="È" or c=="É") : res += 'E'
+		if ALPHABET.find(c) != -1:
+			res += c
+		elif c == 'ê' or c == 'ë':
+			res += 'e'
+		elif c == 'â':
+			res += 'a'
+		elif c == 'ç':
+			res += 'c'
+		elif c == 'î':
+			res += 'i'
+		elif c == 'Ç':
+			res += 'C'
+		elif c == 'ù' or c == "û":
+			res += 'u'
+		elif c == 'ô':
+			res += 'o'
+		elif c == 'Ô':
+			res += 'O'
+		elif c == 'œ':
+			res += 'oe'
+		elif c == "À":
+			res += 'A'
+		elif c == "È" or c == "É":
+			res += 'E'
 	return res
 
 
 # Prend en paramètre un texte et renvoie la chaine binaire associée (en suivant le dictionnaire)
-def conv_bin(txt):
+def conv_alpha_to_bin(txt):
 	X = ""
-	for c in FiltreTXT(txt):
-		i=ALPHABET.find(c)
-		if(i!=-1) : X += ALPHABETBINAIRE[i]
+	for c in filtre_txt(txt):
+		i = ALPHABET.find(c)
+		if i != -1:
+			X += ALPHABETBINAIRE[i]
 	return X
 
 
-# Fait l'inverse de conv_bin : prend une chaine binaire et renvoie les caractères
-def nib_vnoc(txt):
+# Fait l'inverse de conv_alpha_to_bin : prend une chaine binaire et renvoie les caractères
+def conv_bin_to_alpha(txt):
 	n = len(txt)
 	res = ""
 	i = 0
-	while(i<n or i%6!=0) : 
-		if(i%6==0) : paquet_binaire="" 
-		try : c=txt[i]
-		except : c="0"
-		if(c=="1") : paquet_binaire+="1"
-		else : paquet_binaire+="0"
-		i+=1
-		if(i%6==0) : 
-			for b in ALPHABETBINAIRE : 
-				if(ALPHABETBINAIRE[b]==paquet_binaire) :
-					res+=ALPHABET[b]
+	while i < n or i % 6 != 0:
+		if i % 6 == 0:
+			paquet_binaire = ""
+		try:
+			c = txt[i]
+		except:
+			c = "0"
+		if c == "1":
+			paquet_binaire += "1"
+		else:
+			paquet_binaire += "0"
+		i += 1
+		if i % 6 == 0:
+			for b in ALPHABETBINAIRE:
+				if ALPHABETBINAIRE[b] == paquet_binaire:
+					res += ALPHABET[b]
 					break
-	
 	return res
 
 # Ce test ne fait rien
