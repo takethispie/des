@@ -3,11 +3,11 @@ import textwrap
 
 class Feistel:
     @staticmethod
-    def FirstAndLastBit(bits6):
+    def first_and_last_bit(bits6):
         return bits6[0] + bits6[-1]
 
     @staticmethod
-    def MiddleFourBits(bits6):
+    def middle_4_bits(bits6):
         return bits6[1:5]
 
     @staticmethod
@@ -67,11 +67,11 @@ class Feistel:
         key48_left = self.do_permutation_key(expansion_matrix, key32_left)  # 1
         xored = self.xor(key48_left, key48_round)  # 2
         bits6list = self.split_many_blocks_6bits(xored)  # 3 et comme xored fait 48 bits ça fera automatiquement la séparation en 8 blocs de 6 bits
-        for sboxcount, bits6 in enumerate(bits6list):
-            first_last = self.FirstAndLastBit(bits6)
-            middle4 = self.MiddleFourBits(bits6)
-            sboxvalue = self.lookup(sboxcount, first_last, middle4)
-            result += sboxvalue
+        for box_count, bits6 in enumerate(bits6list):
+            first_last = self.first_and_last_bit(bits6)
+            middle4 = self.middle_4_bits(bits6)
+            box_value = self.lookup(box_count, first_last, middle4)
+            result += box_value
         final32bits = self.do_permutation_key(permutation_round_matrix, result)
         return final32bits
 
