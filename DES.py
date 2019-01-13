@@ -46,8 +46,8 @@ class Des:
             pi_right.append(right)
 
         # 4 - Rondes (Pour chacun des blocs)
-        result = list()
-        for i in range(0, len(pi_left[0]) - 1):  # Ou pi_left, ça revient au même
+        result = ""
+        for i in range(0, len(pi_left) - 1):  # Ou pi_left, ça revient au même
             left = pi_left[i]  # plante ici mais c'est juste un out of range
             right = pi_right[i]
             cipher = ""
@@ -59,7 +59,7 @@ class Des:
                 left = temp_left
                 # 5 - Permutation initiale inverse
                 cipher = self.feistel.do_permutation_key(self.const_des["PI_I"], temp_right + temp_left)
-            result.append(cipher)
+            result += cipher
 
         alpha_message = ConvAlphaBin.conv_bin_to_alpha(result)  # Conversion du message en alphab
         return alpha_message
