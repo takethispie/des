@@ -48,7 +48,7 @@ class Des:
         # 4 - Rondes (Pour chacun des blocs)
         result = list()
         for i in range(0, len(pi_left[0]) - 1):  # Ou pi_left, ça revient au même
-            left = pi_left[i]
+            left = pi_left[i]  # plante ici mais c'est juste un out of range
             right = pi_right[i]
             cipher = ""
             for j in range(16):

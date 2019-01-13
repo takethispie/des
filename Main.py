@@ -15,7 +15,7 @@ def main():
     encrypt_decrypt = user_dialog.ENCRYPT
     # message = "D:\Project\Python\des\Messages\MDES5.txt"
     # key = "D:\Project\Python\des\Messages\Clef_de_Orelsan.txt"
-    message = "je sais pas trop"
+    message = "je sais pas trop mais je test des trucs plutot interessant ahah"
     key = "0100110010101110110111001010110111000100011010001100100000101010"
     where_print_result = user_dialog.CONSOLE
 
