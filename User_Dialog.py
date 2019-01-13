@@ -55,7 +55,7 @@ class UserDialog:
                 print("Aucune clé (ou chemin) n'a été entré !")
         return result
 
-    # Demande où affciher le resultat
+    # Demande où afficher le resultat
     def where_result(self):
         while True:
             result = input("Affichage du résultat : [0]console [1]fichier texte ? : ")

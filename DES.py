@@ -24,8 +24,11 @@ class Des:
             key_right = new_key_right
         return sub_keys
 
-    def encrypt_decrypt(self, message, key):
-        bin_message = ConvAlphaBin.conv_alpha_to_bin(message)  # Conversion du message en binaire
+    def encrypt(self, message, key):
+        if message[0] != '0' or message[0] != '1':
+            bin_message = ConvAlphaBin.conv_alpha_to_bin(message)  # Conversion du message en binaire
+        else:
+            bin_message = message
 
         # 1- Création de 16 sous-clefs
         round_keys = self.gen_sub_keys(key)
@@ -44,7 +47,7 @@ class Des:
 
         # 4 - Rondes (Pour chacun des blocs)
         result = list()
-        for i in range(0, len(pi_left) - 1):  # Ou pi_left, ça revient au même
+        for i in range(0, len(pi_left[0]) - 1):  # Ou pi_left, ça revient au même
             left = pi_left[i]
             right = pi_right[i]
             cipher = ""
@@ -61,8 +64,5 @@ class Des:
         alpha_message = ConvAlphaBin.conv_bin_to_alpha(result)  # Conversion du message en alphab
         return alpha_message
 
-    def encrypt(self, message, key):
-        return self.encrypt_decrypt(message, key)
-
     def decrypt(self, message, key):
-        return self.encrypt_decrypt(message, key)
+        return message
