@@ -8,15 +8,15 @@ def main():
     user_dialog = User_Dialog.UserDialog()
 
     # encrypt_decrypt = user_dialog.encrypt_or_decrypt()
-    # message = user_dialog.get_input_message(1)
-    # key = user_dialog.get_input_key()
+    message = user_dialog.get_input_message(1)
+    key = user_dialog.get_input_key()
     # where_print_result = user_dialog.where_result()
 
-    encrypt_decrypt = user_dialog.ENCRYPT
-    # message = "D:\Project\Python\des\Messages\MDES5.txt"
+    encrypt_decrypt = user_dialog.DECRYPT
+    # message = "D:\Project\Python\des\Messages\Chiffrement_DES_de_Orelsan.txt"
     # key = "D:\Project\Python\des\Messages\Clef_de_Orelsan.txt"
-    message = "je sais pas trop mais je test des trucs plutot interessant ahah"
-    key = "0100110010101110110111001010110111000100011010001100100000101010"
+    # message = "je sais pas trop mais je test des trucs plutot interessant ahah"
+    # key = "0100110010101110110111001010110111000100011010001100100000101010"
     where_print_result = user_dialog.CONSOLE
 
     if encrypt_decrypt == user_dialog.ENCRYPT:

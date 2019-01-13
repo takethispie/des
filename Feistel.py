@@ -68,28 +68,20 @@ class Feistel:
         return bits[num_bits:] + bits[:num_bits]
 
     def do_feistel(self, key32_left, key48_round, expansion_matrix, permutation_round_matrix):
-        result = ""
         key48_left = self.do_permutation_key(expansion_matrix, key32_left)  # 1
         xored = self.xor(key48_left, key48_round)  # 2
         bits6list = self.split_many_blocks_6bits(xored)  # 3 et comme xored fait 48 bits ça fera automatiquement la séparation en 8 blocs de 6 bits
-        for box_count, bits6 in enumerate(bits6list):
-            subtitution_s_matrix = Extract_ConstantesDES.recup_constantes_des()["S"]
-            # first_last = self.first_and_last_bit(bits6)
-            # middle4 = self.middle_4_bits(bits6)
-            # box_value = self.lookup(box_count, first_last, middle4)
-            # box_value = self.lookup(box_count, right2, middle3)
-
-            right2 = self.conv_bin_to_decimal(self.bit_right_2(bits6))
-            middle4 = self.conv_bin_to_decimal(self.middle_4_bits(bits6))
-            box_value = self.conv_decimal_to_bin(subtitution_s_matrix[box_count][right2][middle4])
-
-            result += box_value
-
+        result = self.lookup(bits6list)  # 3
         final32bits = self.do_permutation_key(permutation_round_matrix, result)
         return final32bits
 
-    def lookup(self, sboxMatrix, firstlast, middle4):
-        first_last = self.conv_bin_to_decimal(firstlast)
-        middle = self.conv_bin_to_decimal(middle4)
-        result = sboxMatrix[first_last][middle]
-        return self.conv_decimal_to_bin(result)
+    def lookup(self, bits6list):
+        result = ""
+        for box_count in range(8):
+            bits6 = bits6list[box_count]
+            subtitution_s_matrix = Extract_ConstantesDES.recup_constantes_des()["S"]
+            right2 = self.conv_bin_to_decimal(self.bit_right_2(bits6))
+            middle4 = self.conv_bin_to_decimal(self.middle_4_bits(bits6))
+            box_value = self.conv_decimal_to_bin(subtitution_s_matrix[box_count][right2][middle4])  # + 1 mais comme c'est un tableau on a pas besoin de le rajouter
+            result += box_value
+        return result

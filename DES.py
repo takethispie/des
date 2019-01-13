@@ -34,6 +34,47 @@ class Des:
         round_keys = self.gen_sub_keys(key)
 
         # 2 - Paquetage
+        blocks = self.feistel.split_many_blocks_64bits(
+            bin_message)  # Split du message binaire en plusieurs blocs de 64bits
+
+        # 3 - Permutation initiale
+        pi_left = list()
+        pi_right = list()
+        for i in range(0, len(blocks) - 1):
+            blocks[i] = self.feistel.do_permutation_key(self.const_des["PI"], blocks[i])  # Permutation PI
+            left, right = self.feistel.split_half_64bits(blocks[i])
+            pi_left.append(left)
+            pi_right.append(right)
+
+        # 4 - Rondes (Pour chacun des blocs)
+        result = ""
+        for i in range(0, len(pi_left) - 1):  # Ou pi_left, ça revient au même
+            left = pi_left[i]
+            right = pi_right[i]
+            for j in range(16):
+                dof_result = self.feistel.do_feistel(right, round_keys[j], self.const_des["E"], self.const_des["PERM"])
+                temp_right = self.feistel.xor(left, dof_result)
+                temp_left = right
+                right = temp_right
+                left = temp_left
+
+            # 5 - Permutation initiale inverse
+            cipher = self.feistel.do_permutation_key(self.const_des["PI_I"], left + right)
+            result += cipher
+
+        alpha_message = ConvAlphaBin.conv_bin_to_alpha(result)  # Conversion du message en alphab
+        return alpha_message
+
+    def decrypt(self, message, key):
+        if message[0] != '0' or message[0] != '1':
+            bin_message = ConvAlphaBin.conv_alpha_to_bin(message)  # Conversion du message en binaire
+        else:
+            bin_message = message
+
+        # 1- Création de 16 sous-clefs
+        round_keys = self.gen_sub_keys(key)
+
+        # 2 - Paquetage
         blocks = self.feistel.split_many_blocks_64bits(bin_message)  # Split du message binaire en plusieurs blocs de 64bits
 
         # 3 - Permutation initiale
@@ -48,21 +89,18 @@ class Des:
         # 4 - Rondes (Pour chacun des blocs)
         result = ""
         for i in range(0, len(pi_left) - 1):  # Ou pi_left, ça revient au même
-            left = pi_left[i]  # plante ici mais c'est juste un out of range
+            left = pi_left[i]
             right = pi_right[i]
-            cipher = ""
-            for j in range(16):
+            for j in range(0, 16, -1):
                 dof_result = self.feistel.do_feistel(right, round_keys[j], self.const_des["E"], self.const_des["PERM"])
                 temp_right = self.feistel.xor(left, dof_result)
                 temp_left = right
                 right = temp_right
                 left = temp_left
-                # 5 - Permutation initiale inverse
-                cipher = self.feistel.do_permutation_key(self.const_des["PI_I"], temp_right + temp_left)
+
+            # 5 - Permutation initiale inverse
+            cipher = self.feistel.do_permutation_key(self.const_des["PI_I"], left + right)
             result += cipher
 
         alpha_message = ConvAlphaBin.conv_bin_to_alpha(result)  # Conversion du message en alphab
         return alpha_message
-
-    def decrypt(self, message, key):
-        return message
